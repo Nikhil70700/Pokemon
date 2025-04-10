@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import '.././index.css'
+import '../index.css'
 import PokemonCards from './PokemonCards';
 
 const Pokemon = () => {
     const[pokemon,setPokemon]=useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+
     const API = 'https://pokeapi.co/api/v2/pokemon?limit=50';
 
     const fetchPokemon = async () => {
@@ -19,14 +23,31 @@ const Pokemon = () => {
             // console.log(detailedPokemonData);
             const detailedResponse=await Promise.all(detailedPokemonData);
             console.log(detailedResponse);
-            setPokemon(detailedResponse)
+            setPokemon(detailedResponse);
+            setLoading(false);
         } catch (error) {
             console.error(error);
+            setLoading(false);
+            setError(error);
         }
     }
     useEffect(() => {
         fetchPokemon();
-    }, [])
+    }, []);
+    if(loading){
+        return(
+            <div>
+                <h1>Loading...</h1>
+            </div>
+        )
+    }
+    if(error){
+        return(
+            <div>
+                <h1>Warning! : {error.message}</h1>
+            </div>
+        )
+    }
     return (
         <>
            <section className='container'>
