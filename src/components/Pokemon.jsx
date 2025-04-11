@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../index.css';
 import PokemonCards from './PokemonCards';
 import SearchPokemon from './SearchPokemon';
+import Loader from '../Loader/Loader';
 
 const Pokemon = () => {
   const [pokemon, setPokemon] = useState([]);
@@ -9,7 +10,7 @@ const Pokemon = () => {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
 
-  const API = 'https://pokeapi.co/api/v2/pokemon?limit=50';
+  const API = 'https://pokeapi.co/api/v2/pokemon?limit=252';
 
   const fetchPokemon = async () => {
     try {
@@ -42,9 +43,7 @@ const Pokemon = () => {
 
   if (loading) {
     return (
-      <div>
-        <h1>Loading...</h1>
-      </div>
+    <Loader/>
     );
   }
 
@@ -59,15 +58,15 @@ const Pokemon = () => {
   return (
     <section className="container">
       <header>
-        <h1>Pokemon List</h1>
+        <h1 className='header-text'>Pokemon List</h1>
       </header>
       {/* Pass the search state and setter so that the child component can update the search */}
       <SearchPokemon search={search} setSearch={setSearch} />
-      <div>
+      <div className='main-card'>
         <ul className="cards">
           {searchData.map((curPokemon) => (
             <PokemonCards key={curPokemon.id} pokemonData={curPokemon} />
-          ))}
+          ))}   
         </ul>
       </div>
     </section>
