@@ -3,6 +3,7 @@ import '../index.css';
 import PokemonCards from './PokemonCards';
 import SearchPokemon from './SearchPokemon';
 import Loader from '../Loader/Loader';
+import { motion } from 'framer-motion';
 
 const Pokemon = () => {
   const [pokemon, setPokemon] = useState([]);
@@ -22,7 +23,6 @@ const Pokemon = () => {
         return data;
       });
       const detailedResponse = await Promise.all(detailedPokemonData);
-      console.log(detailedResponse);
       setPokemon(detailedResponse);
       setLoading(false);
     } catch (error) {
@@ -36,38 +36,43 @@ const Pokemon = () => {
     fetchPokemon();
   }, []);
 
-  // Filter pokemon by search input
   const searchData = pokemon.filter((curPokemon) =>
     curPokemon.name.toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading) {
-    return (
-    <Loader/>
-    );
+    return <Loader />;
   }
 
   if (error) {
-    return (
-      <div>
-        <h1>Warning! : {error.message}</h1>
-      </div>
-    );
+    return <div><h1>Warning! : {error.message}</h1></div>;
   }
+
+  const containerVariants = {
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
   return (
     <section className="container">
       <header>
         <h1 className='header-text'>Pokemon List</h1>
       </header>
-      {/* Pass the search state and setter so that the child component can update the search */}
       <SearchPokemon search={search} setSearch={setSearch} />
       <div className='main-card'>
-        <ul className="cards">
-          {searchData.map((curPokemon) => (
-            <PokemonCards key={curPokemon.id} pokemonData={curPokemon} />
-          ))}   
-        </ul>
+        <motion.ul
+          className="cards"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {searchData.map((curPokemon, index) => (
+            <PokemonCards key={curPokemon.id} pokemonData={curPokemon} index={index} />
+          ))}
+        </motion.ul>
       </div>
     </section>
   );
